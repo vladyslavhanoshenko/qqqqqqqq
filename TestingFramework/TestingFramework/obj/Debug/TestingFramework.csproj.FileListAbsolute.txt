@@ -1,0 +1,17 @@
+F:\TestingFramework\TestingFramework\bin\Debug\TestingFramework.dll
+F:\TestingFramework\TestingFramework\bin\Debug\TestingFramework.pdb
+F:\TestingFramework\TestingFramework\bin\Debug\nunit.framework.dll
+F:\TestingFramework\TestingFramework\bin\Debug\WebDriver.dll
+F:\TestingFramework\TestingFramework\bin\Debug\WebDriver.Support.dll
+F:\TestingFramework\TestingFramework\bin\Debug\nunit.framework.pdb
+F:\TestingFramework\TestingFramework\bin\Debug\nunit.framework.xml
+F:\TestingFramework\TestingFramework\bin\Debug\WebDriver.xml
+F:\TestingFramework\TestingFramework\bin\Debug\WebDriver.Support.xml
+F:\TestingFramework\TestingFramework\obj\Debug\TestingFramework.csprojAssemblyReference.cache
+F:\TestingFramework\TestingFramework\obj\Debug\TestingFramework.csproj.ResolveComReference.cache
+F:\TestingFramework\TestingFramework\obj\Debug\TestingFramework.csproj.CoreCompileInputs.cache
+F:\TestingFramework\TestingFramework\obj\Debug\TestingFramework.csproj.CopyComplete
+F:\TestingFramework\TestingFramework\obj\Debug\TestingFramework.dll
+F:\TestingFramework\TestingFramework\obj\Debug\TestingFramework.pdb
+F:\TestingFramework\TestingFramework\bin\Debug\RestSharp.dll
+F:\TestingFramework\TestingFramework\bin\Debug\RestSharp.xml
