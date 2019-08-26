@@ -8,9 +8,9 @@ namespace TestingFramework.Helpers
 {
     class ExcelFileReader
     {
-        public string filePath = @"C:\Users\Vlad Gagarin\Desktop\test1\test1\test.xlsx";
+        
 
-        public List<string> ReadExcelFile()
+        public List<string> ReadExcelFile(string filePath)
         {
             Microsoft.Office.Interop.Excel.Application ObjExcel = new Microsoft.Office.Interop.Excel.Application();
             Microsoft.Office.Interop.Excel.Workbook ObjWorkBook = ObjExcel.Workbooks.Open(filePath, 0, false, 5, "", "", false, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "", true, false, 0, true, false, false);

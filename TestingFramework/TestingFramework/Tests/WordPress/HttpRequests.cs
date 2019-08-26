@@ -44,6 +44,14 @@ namespace TestingFramework.Tests.WordPress
                     Login = test2[1];
                     Password = test2[2];
 
+                    System.Threading.Tasks.Task<HttpResponseMessage> tmp = client.GetAsync(Url);
+                    while (!tmp.IsCompleted)
+                    {
+
+                    }
+                    var result = tmp.Result;
+
+
                     using (HttpResponseMessage response = await client.GetAsync(Url))
                     {
                         if (!response.IsSuccessStatusCode)

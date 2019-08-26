@@ -58,12 +58,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\ErrorsChecker.cs" />
     <Compile Include="Helpers\ReadersAndWritersToOrFromFile.cs" />
     <Compile Include="Helpers\StatusChecker.cs" />
     <Compile Include="Helpers\UserAgentsAndProxy.cs" />
     <Compile Include="Pages\WordPressAdminLoginPage.cs" />
     <Compile Include="Pages\WordPressAdminPage.cs" />
+    <Compile Include="Runners\SeleniumRunner.cs" />
     <Compile Include="Tests\WordPress\HttpRequests.cs" />
+    <Compile Include="Tests\WordPress\MultithreadRun.cs" />
     <Compile Include="Tests\WordPress\PostRequest.cs" />
     <Compile Include="Tests\WordPress\WordPressLoginAndVerify.cs" />
     <Compile Include="Helpers\ExcelFileReader.cs" />
