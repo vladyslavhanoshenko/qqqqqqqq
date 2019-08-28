@@ -46,5 +46,20 @@ namespace TestingFramework.Helpers
             }
             return "Written";
         }
+
+        public void WriteIndexToTheFile(int index, string indexFileWriterPath)
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(indexFileWriterPath, false, System.Text.Encoding.Default))
+                {
+                    sw.Write(index);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Index was not saved");
+            }
+        }
     }
 }

@@ -21,11 +21,12 @@ namespace TestingFramework.Pages
         [FindsBy(How = How.XPath, Using = LOGIN_BUTTON)]
         public IWebElement loginButton;
 
-        public void Login(string login, string password)
+        public WordPressAdminLoginPage Login()
         {
-            loginTextField.SendKeys(login);
-            passwordTextField.SendKeys(password);
-            loginButton.Click();
+            //loginTextField.SendKeys(login);
+            //passwordTextField.SendKeys(password);
+            //loginButton.Click();
+            return this;
         }
     }
 }

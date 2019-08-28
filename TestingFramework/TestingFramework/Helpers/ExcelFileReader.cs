@@ -8,8 +8,6 @@ namespace TestingFramework.Helpers
 {
     class ExcelFileReader
     {
-        
-
         public List<string> ReadExcelFile(string filePath)
         {
             Microsoft.Office.Interop.Excel.Application ObjExcel = new Microsoft.Office.Interop.Excel.Application();

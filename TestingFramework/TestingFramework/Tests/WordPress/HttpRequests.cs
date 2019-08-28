@@ -23,7 +23,7 @@ namespace TestingFramework.Tests.WordPress
         [Test]
        public async System.Threading.Tasks.Task SendHttpRequestToWordPressServerAsync()
         {
-            var dataFromExcelFile = ExcelReader.ReadExcelFile();
+            var dataFromExcelFile = ExcelReader.ReadExcelFile(indexFileReaderPath);
             int indexFromFile = WriteAndReadFile.ReadIndexFromFile(indexFileReaderPath);
             dataFromExcelFile.RemoveRange(0, indexFromFile);
             var requestBody = new List<KeyValuePair<string, string>>()

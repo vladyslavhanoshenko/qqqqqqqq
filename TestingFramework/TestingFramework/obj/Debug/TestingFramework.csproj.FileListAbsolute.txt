@@ -32,3 +32,7 @@ F:\qqqqqqqq\TestingFramework\TestingFramework\obj\Debug\TestingFramework.csproj.
 F:\qqqqqqqq\TestingFramework\TestingFramework\obj\Debug\TestingFramework.csproj.CopyComplete
 F:\qqqqqqqq\TestingFramework\TestingFramework\obj\Debug\TestingFramework.dll
 F:\qqqqqqqq\TestingFramework\TestingFramework\obj\Debug\TestingFramework.pdb
+F:\qqqqqqqq\TestingFramework\TestingFramework\bin\Debug\FluentAssertions.dll
+F:\qqqqqqqq\TestingFramework\TestingFramework\bin\Debug\FluentAssertions.pdb
+F:\qqqqqqqq\TestingFramework\TestingFramework\bin\Debug\FluentAssertions.xml
+F:\qqqqqqqq\TestingFramework\TestingFramework\obj\Debug\Interop.Microsoft.Vbe.Interop.Forms.dll
