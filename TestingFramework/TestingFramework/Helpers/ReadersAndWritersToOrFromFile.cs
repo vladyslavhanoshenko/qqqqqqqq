@@ -29,6 +29,51 @@ namespace TestingFramework.Helpers
             return indexFromFile;
         }
 
+        public string ReadFile(string filePath)
+        {
+            using (StreamReader sr = new StreamReader(filePath, System.Text.Encoding.Default))
+            {
+                var text = sr.ReadToEnd();
+                return text;
+            }
+
+        }
+
+        public void RemoveFromFile(string stringToRemove, string filePath)
+        {
+            var text = ReadFile(filePath).Split('\n').ToList();
+            var fileIndex = text.FindIndex(i => i.Contains(stringToRemove));
+            text.Remove(text.ElementAt(fileIndex));
+
+            using(StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.Default))
+            {
+                foreach(var test in text)
+                {
+                    sw.Write(test);
+                    sw.Write("\n");
+                }
+                
+              
+            }
+
+        }
+
+        public void RewriteFile(List<string> textToBeWrite, string path)
+        {
+            using (StreamWriter sw = new StreamWriter(path, true, System.Text.Encoding.Default))
+            {
+                foreach(var test in textToBeWrite)
+                {
+                    sw.Write(test);
+                    sw.Write("\n");
+
+                }
+                
+            }
+
+
+        }
+
         public string WriteToFile(string text, string urlToVerify, string readPath, string writePath)
         {
             using (StreamReader sr = new StreamReader(readPath, System.Text.Encoding.Default))
