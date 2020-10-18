@@ -31,5 +31,10 @@ namespace TestingFramework.Pages
             _mainPage.PasswordField2.GetElement().SendKeys(password);
             _mainPage.SubmitRegistrationButton.GetElement().Click();
         }
+
+        public void VerifyAccont()
+        {
+
+        }
     }
 }

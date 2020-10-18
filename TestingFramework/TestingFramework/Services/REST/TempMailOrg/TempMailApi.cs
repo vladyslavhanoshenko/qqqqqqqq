@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using TestingFramework.Services.REST.TempMailOrg.Models;
 
 namespace TestingFramework.Services.REST.TempMailOrg
 {
@@ -11,7 +12,7 @@ namespace TestingFramework.Services.REST.TempMailOrg
     public class TempMailApi
     {
         private WebClient client = new WebClient();
-        private string BaseUrl = "https://privatix-temp-mail-v1.p.rapidapi.com/request";
+        private string BaseUrl = "https://rapidapi.p.rapidapi.com/request";
 
         public TempMailApi()
         {
@@ -28,20 +29,17 @@ namespace TestingFramework.Services.REST.TempMailOrg
 
         private string GetEmails(string md5Hash)
         {
-            return client.DownloadString(BaseUrl + $"/mail/id/{md5Hash}");
+            return client.DownloadString(BaseUrl + $"/mail/id/{md5Hash}/");
         }
 
-        public string GetMailsWithWait(string md5Hash)
+        public EmailViewModel[] GetMailsWithWait(string md5Hash)
         {
-            while (true)
+            string response = GetEmails(md5Hash);
+            while (response.Contains("There are no emails yet"))
             {
-                var response = GetEmails(md5Hash);
-                if (response.Length > 0)
-                    return response;
+                response = GetEmails(md5Hash);
             }
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<EmailViewModel[]>(response);
         }
-
-
-
     }
 }

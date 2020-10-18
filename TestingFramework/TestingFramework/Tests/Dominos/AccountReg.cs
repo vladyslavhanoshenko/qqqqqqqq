@@ -69,8 +69,8 @@ namespace TestingFramework.Tests.Dominos
             dominosContext.RegisterAccount(fullEmailAddress, Password);
 
             var test = tempMailApi.GetMailsWithWait(fullEmailAddress.ToMd5Hash());
-            var messagesFromMailBox = _1secmailService.GetMessagesFromMailBox(MailBoxName, MailBoxDomain);
-            var singleMessage = _1secmailService.GetSingleMessage(MailBoxName, MailBoxDomain, messagesFromMailBox.Single().id);
+            var verificationLink = test.Single().MailText.GetDominosUrl();
+            
 
 
 
