@@ -70,6 +70,10 @@ namespace TestingFramework.Tests.Dominos
 
             var test = tempMailApi.GetMailsWithWait(fullEmailAddress.ToMd5Hash());
             var verificationLink = test.Single().MailText.GetDominosUrl();
+
+            Driver.driver.Navigate().GoToUrl(verificationLink);
+
+            dominosContext.VerifyAccont()
             
 
 

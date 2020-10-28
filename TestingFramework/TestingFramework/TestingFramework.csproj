@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commons\BasePage.cs" />
+    <Compile Include="Commons\BaseSteps.cs" />
     <Compile Include="Commons\BaseTest.cs" />
     <Compile Include="Commons\Driver.cs" />
     <Compile Include="Commons\RefreshableWebElement.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Pages\DominosContext.cs" />
     <Compile Include="Pages\DominosLoginPage.cs" />
     <Compile Include="Pages\DominosRegistrationPage.cs" />
+    <Compile Include="Pages\PhoneNumberConfirmationPopup.cs" />
     <Compile Include="Pages\Sms-activate\MainPage.cs" />
     <Compile Include="Pages\Sms-activate\NumbersPanel.cs" />
     <Compile Include="Pages\WordPressAdminLoginPage.cs" />
@@ -91,6 +93,8 @@
     <Compile Include="Services\REST\TempMailOrg\TempMailApi.cs" />
     <Compile Include="Services\REST\TempMailOrg\TempMailApiContext.cs" />
     <Compile Include="Steps\DominosRegistrationPageSteps.cs" />
+    <Compile Include="Steps\DominosRegistrationPageStepsBase.cs" />
+    <Compile Include="Steps\PhoneNumberConfirmationPopupSteps.cs" />
     <Compile Include="Tests\Dominos\AccountReg.cs" />
     <Compile Include="Tests\WordPress\FileWriter.cs" />
     <Compile Include="Tests\WordPress\HttpRequests.cs" />

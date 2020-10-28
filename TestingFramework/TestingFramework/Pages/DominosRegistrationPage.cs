@@ -1,11 +1,10 @@
 ﻿using OpenQA.Selenium;
-using TestingFramework.Commons;
-using TestingFramework.Helpers;
 
 namespace TestingFramework.Pages
 {
     public class DominosRegistrationPage
     {
+        public PhoneNumberConfirmationPopup phoneNumberConfirmationPopup = new PhoneNumberConfirmationPopup(); 
         public const string OperatorCodesXpath = "//div[contains(@id, 'react-select')]";
         public By FirstName = By.XPath("//input[@name='first_name']");
         public By LastName = By.XPath("//input[@name='last_name']");
@@ -18,7 +17,7 @@ namespace TestingFramework.Pages
         public By Sex = By.XPath("//div[@class='modal-location__body']");
         public By SubmitCheckbox = By.XPath("//div[@class='modal-location__body']");
         public By SubmitButton = By.XPath("//div[@class='modal-location__body']");
-
+       
         //public IWebElement SubmitElement => SubmitButton.GetElement();
     }
 }

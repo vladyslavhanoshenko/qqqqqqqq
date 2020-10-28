@@ -3,12 +3,21 @@ using TestingFramework.Helpers;
 using TestingFramework.Pages;
 using OpenQA.Selenium;
 using System.Linq;
+using OpenQA.Selenium.Support.UI;
 
 namespace TestingFramework.Steps
 {
-    public class DominosRegistrationPageSteps
+    public class DominosRegistrationPageSteps : DominosRegistrationPageStepsBase
     {
-        private DominosRegistrationPage registrationPage;
+        public void OpenConfirmationLink(string url)
+        {
+            Driver.driver.Navigate().GoToUrl(url);
+        }
+
+        public void WaitUntilRegistrationPageOpened()
+        {
+            wait.Until(ExpectedConditions.ElementIsVisible(registrationPage.FirstName);
+        }
 
         public void SetFirstName(string firstName)
         {
