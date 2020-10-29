@@ -16,7 +16,7 @@ namespace TestingFramework.Steps
 
         public void WaitUntilRegistrationPageOpened()
         {
-            wait.Until(ExpectedConditions.ElementIsVisible(registrationPage.FirstName);
+            wait.Until(ExpectedConditions.ElementIsVisible(registrationPage.FirstName));
         }
 
         public void SetFirstName(string firstName)

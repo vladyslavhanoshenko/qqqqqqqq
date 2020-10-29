@@ -1,10 +1,11 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
 
-namespace TestingFramework.Helpers.SmsRegApi
+namespace TestingFramework.Services.REST.SmsRegApi
 {
     public class SmsRegApiService
     {
@@ -12,10 +13,10 @@ namespace TestingFramework.Helpers.SmsRegApi
         private static string BaseUrl = $@"http://sms-activate.ru/stubs/handler_api.php?api_key={ApiKey}";
         private static WebClient client = new WebClient();
 
-        public enum CountryName 
+        public enum CountryName
         {
             [Description("Ukraine")]
-            Ukraine = 2,
+            Ukraine = 1,
         }
 
         public enum Statuses
@@ -44,14 +45,25 @@ namespace TestingFramework.Helpers.SmsRegApi
             BAD_ACTION
         }
 
-
-
-        public static string GetBalance()
+        public static double GetBalance()
         {
             var response = client.DownloadString(BaseUrl + "&action=getBalance");
-            //var converted = Newtonsoft.Json.JsonConvert.DeserializeObject<BalanceModel>(response);
-            return response;
+            var value = response.Replace("ACCESS_BALANCE:", string.Empty);
+            return double.Parse(value);
+        }
 
+        public static JObject GetAvailableNumbers()
+        {
+            var response = client.DownloadString(BaseUrl + $"&action=getNumbersStatus&country={(int)CountryName.Ukraine}");
+            var parsedAvailableNumbers = JObject.Parse(response);
+            return parsedAvailableNumbers;
+        }
+
+        public static int GetAvailableNumberForOtherServices()
+        {
+            var parsedAvailableNumbers = GetAvailableNumbers();
+            var otherServiceNumbersNode = parsedAvailableNumbers["ot_0"];
+            return int.Parse(otherServiceNumbersNode.ToString()); 
         }
 
         public static Dictionary<string, string> GetNumber(string serviceName, string forward, string operatorName, string refName, string contryName)
@@ -64,6 +76,12 @@ namespace TestingFramework.Helpers.SmsRegApi
                 {"PhoneNumber", parsedData.ElementAt(1)}
             };
             return data;
+        }
+
+        public static Dictionary<string, string> GetNumber(string serviceName = "ot_0", int forward = 0, string operatorName = null, int refCode = 0, 
+            CountryName country = CountryName.Ukraine, string[] phoneExceptions = null)
+        {
+            return null;
         }
 
         public static string SetStatus(string status, string id, string forward)
@@ -81,7 +99,7 @@ namespace TestingFramework.Helpers.SmsRegApi
                 response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
             }
             var splittedData = response.Split(':').ToList();
-            if(splittedData.Count != 3)
+            if (splittedData.Count != 3)
             {
                 //добавить запись ошибки в файл
                 //кинуть  эксепшен

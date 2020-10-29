@@ -6,10 +6,8 @@ using System;
 using System.Linq;
 using TestingFramework.Commons;
 using TestingFramework.Helpers;
-using TestingFramework.Helpers.SmsRegApi;
-using TestingFramework.Helpers.TempMailApi;
 using TestingFramework.Pages;
-using TestingFramework.Pages.Sms_activate;
+using TestingFramework.Services.REST.SmsRegApi;
 using TestingFramework.Services.REST.TempMailOrg;
 
 namespace TestingFramework.Tests.Dominos
@@ -29,7 +27,7 @@ namespace TestingFramework.Tests.Dominos
         private Random random = new Random();
         private int numForEmail => random.Next(10000);
         private string MailBoxName => $"petrov{numForEmail}";
-        public string MailBoxDomain = "1secmail.com";
+  
         private const string Password = "qwerty67u9";
         //private string FullEmailAddress => MailBoxName + "@" + MailBoxDomain;
         private TempMailApi tempMailApi = new TempMailApi();
@@ -62,6 +60,7 @@ namespace TestingFramework.Tests.Dominos
         [Test]
         public void DominosReg()
         {
+            var test123 = SmsRegApiService.GetAvailableNumberForOtherServices();
             var domainNamesList = tempMailApi.GetDomainsList();
             var fullEmailAddress = MailBoxName + domainNamesList.First();
 
@@ -73,7 +72,7 @@ namespace TestingFramework.Tests.Dominos
 
             Driver.driver.Navigate().GoToUrl(verificationLink);
 
-            dominosContext.VerifyAccont()
+            //dominosContext.VerifyAccont()
             
 
 

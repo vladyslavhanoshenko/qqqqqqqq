@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace TestingFramework.Services.REST.TempMailOrg
 {
-    public class TempMailApiContext
+    public static class TempMailApiContext
     {
-        TempMailApi mailService = new TempMailApi();
+        //TempMailApi mailService = new TempMailApi();
 
 
     }

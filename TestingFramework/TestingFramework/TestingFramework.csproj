@@ -71,12 +71,13 @@
     <Compile Include="Commons\BaseSteps.cs" />
     <Compile Include="Commons\BaseTest.cs" />
     <Compile Include="Commons\Driver.cs" />
+    <Compile Include="Commons\EmailGenerationHelper.cs" />
     <Compile Include="Commons\RefreshableWebElement.cs" />
     <Compile Include="Helpers\ElementActionsHelper.cs" />
     <Compile Include="Helpers\ErrorsChecker.cs" />
     <Compile Include="Helpers\ExtensionsMethods.cs" />
     <Compile Include="Helpers\ReadersAndWritersToOrFromFile.cs" />
-    <Compile Include="Helpers\SmsRegApi\SmsRegApiService.cs" />
+    <Compile Include="Services\REST\SmsRegApi\SmsRegApiService.cs" />
     <Compile Include="Helpers\StatusChecker.cs" />
     <Compile Include="Helpers\TempMailApi\1secmailService.cs" />
     <Compile Include="Helpers\UserAgentsAndProxy.cs" />

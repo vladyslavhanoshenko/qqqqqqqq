@@ -44,7 +44,7 @@ namespace TestingFramework.Pages
             dominosRegistrationPageSteps.SetPhoneNumber(numberWithoutOperatorCode);
             dominosRegistrationPageSteps.ClickPhoneSaveButton();
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupDisplayed();
-            phoneNumberConfirmationPopupSteps.SetSmsCode();
+            phoneNumberConfirmationPopupSteps.SetSmsCode(null);
             phoneNumberConfirmationPopupSteps.ClickSmsConfirmationButton();
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupIsNotDisplayed();
         }
@@ -52,13 +52,13 @@ namespace TestingFramework.Pages
         {
             dominosRegistrationPageSteps.OpenConfirmationLink(url);
             dominosRegistrationPageSteps.WaitUntilRegistrationPageOpened();
-            dominosRegistrationPageSteps.SetFirstName();
-            dominosRegistrationPageSteps.SetLastName();
-            dominosRegistrationPageSteps.SetEmail();
-            AddPhoneNumber();
+            dominosRegistrationPageSteps.SetFirstName(null);
+            dominosRegistrationPageSteps.SetLastName(null);
+            dominosRegistrationPageSteps.SetEmail(null);
+            AddPhoneNumber(null);
             
-            dominosRegistrationPageSteps.SetDateOfBirth();
-            dominosRegistrationPageSteps.SelectSex();
+            dominosRegistrationPageSteps.SetDateOfBirth(null);
+            dominosRegistrationPageSteps.SelectSex(null);
             dominosRegistrationPageSteps.CheckConfirmationCheckbox();
             dominosRegistrationPageSteps.ClickConfirmationButton();
             
