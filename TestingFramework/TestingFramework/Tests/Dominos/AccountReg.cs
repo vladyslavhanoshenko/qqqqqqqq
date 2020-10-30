@@ -60,8 +60,6 @@ namespace TestingFramework.Tests.Dominos
         [Test]
         public void DominosReg()
         {
-            var test123 = SmsRegApiService.GetAvailableNumberForOtherServices();
-            var activationData = SmsRegApiService.GetNumberForOtherService();
             var domainNamesList = tempMailApi.GetDomainsList();
             var fullEmailAddress = MailBoxName + domainNamesList.First();
 
@@ -71,9 +69,11 @@ namespace TestingFramework.Tests.Dominos
             var test = tempMailApi.GetMailsWithWait(fullEmailAddress.ToMd5Hash());
             var verificationLink = test.Single().MailText.GetDominosUrl();
 
-            Driver.driver.Navigate().GoToUrl(verificationLink);
+            
 
-            //dominosContext.VerifyAccont()
+
+
+            dominosContext.VerifyAccont(verificationLink);
             
 
 

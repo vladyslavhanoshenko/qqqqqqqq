@@ -41,6 +41,8 @@ namespace TestingFramework.Steps
 
         public void SelectOperatorCode(string operatorCode)
         {
+            var expandButton = Driver.driver.FindElement(By.XPath("//div[contains(@class, 'indicatorContainer')]"));
+            expandButton.Click();
             var dropDownElements = Driver.driver.FindElements(By.XPath(DominosRegistrationPage.OperatorCodesXpath)).ToList();
             var operatorCodeItem = dropDownElements.Single(i => i.GetInnerHTML().Equals(operatorCode));
             operatorCodeItem.Click();

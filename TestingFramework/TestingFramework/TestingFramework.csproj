@@ -77,6 +77,7 @@
     <Compile Include="Helpers\ErrorsChecker.cs" />
     <Compile Include="Helpers\ExtensionsMethods.cs" />
     <Compile Include="Helpers\ReadersAndWritersToOrFromFile.cs" />
+    <Compile Include="Services\REST\SmsRegApi\GetNumberViewModel.cs" />
     <Compile Include="Services\REST\SmsRegApi\SmsRegApiService.cs" />
     <Compile Include="Helpers\StatusChecker.cs" />
     <Compile Include="Helpers\TempMailApi\1secmailService.cs" />

@@ -1,8 +1,10 @@
 ﻿
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using TestingFramework.Commons;
 using TestingFramework.Helpers;
+using TestingFramework.Services.REST.SmsRegApi;
 using TestingFramework.Steps;
 
 namespace TestingFramework.Pages
@@ -29,6 +31,10 @@ namespace TestingFramework.Pages
                 _mainPage.LocationSelectPopUpCloseButton.GetElement().Click();
             }
             _mainPage.OpenLoginPopupButton.GetElement().Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(_mainPage.RegisterButton));
+            Actions action = new Actions(Driver.driver);
+            action.MoveToElement(_mainPage.RegisterButton.GetElement()).Perform();
+            
             _mainPage.RegisterButton.GetElement().Click();
             _mainPage.EmailField.GetElement().SendKeys(email);
             _mainPage.PasswordField.GetElement().SendKeys(password);
@@ -36,10 +42,17 @@ namespace TestingFramework.Pages
             _mainPage.SubmitRegistrationButton.GetElement().Click();
         }
 
-        public void AddPhoneNumber(string phoneNumber)
+        public void AddPhoneNumber()
         {
-            var operatorCode = phoneNumber.Substring(0, 5);
-            var numberWithoutOperatorCode = phoneNumber.Substring(5);
+            var availableNumbers = SmsRegApiService.GetAvailableNumberForOtherServices();
+            if (availableNumbers > 0)
+            {
+                //add waiter for numbers
+            }
+            var activationData = SmsRegApiService.GetNumberForOtherService();
+            var operatorCode = activationData.PhoneNumber.Substring(0, 5).Remove(0, 2);
+            var numberWithoutOperatorCode = activationData.PhoneNumber.Remove(0, 5);
+            SmsRegApiService.SetStatus(8, activationData.Id, 0);
             dominosRegistrationPageSteps.SelectOperatorCode(operatorCode);
             dominosRegistrationPageSteps.SetPhoneNumber(numberWithoutOperatorCode);
             dominosRegistrationPageSteps.ClickPhoneSaveButton();
@@ -52,10 +65,9 @@ namespace TestingFramework.Pages
         {
             dominosRegistrationPageSteps.OpenConfirmationLink(url);
             dominosRegistrationPageSteps.WaitUntilRegistrationPageOpened();
-            dominosRegistrationPageSteps.SetFirstName(null);
-            dominosRegistrationPageSteps.SetLastName(null);
-            dominosRegistrationPageSteps.SetEmail(null);
-            AddPhoneNumber(null);
+            dominosRegistrationPageSteps.SetFirstName("Vladyslav");
+            dominosRegistrationPageSteps.SetLastName("Petrov");
+            AddPhoneNumber();
             
             dominosRegistrationPageSteps.SetDateOfBirth(null);
             dominosRegistrationPageSteps.SelectSex(null);

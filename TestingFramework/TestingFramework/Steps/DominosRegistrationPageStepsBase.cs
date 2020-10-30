@@ -5,6 +5,6 @@ namespace TestingFramework.Steps
 {
     public class DominosRegistrationPageStepsBase : BaseSteps
     {
-        protected DominosRegistrationPage registrationPage;
+        protected DominosRegistrationPage registrationPage = new DominosRegistrationPage();
     }
 }

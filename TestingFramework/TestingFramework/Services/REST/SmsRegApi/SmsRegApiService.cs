@@ -38,7 +38,7 @@ namespace TestingFramework.Services.REST.SmsRegApi
 
         public enum GetStatusCodes
         {
-            [Description("STATUS_WAIT_CODE ")]
+            [Description("STATUS_WAIT_CODE")]
             STATUS_WAIT_CODE,
 
             [Description("STATUS_WAIT_RETRY")]
@@ -53,6 +53,24 @@ namespace TestingFramework.Services.REST.SmsRegApi
             [Description("STATUS_OK")]
             STATUS_OK
         }
+
+        //public enum SetStatusCodes
+        //{
+        //    [Description("Sms was sent")]
+        //    Sms_was_sent,
+
+        //    [Description("STATUS_WAIT_RETRY")]
+        //    STATUS_WAIT_RETRY,
+
+        //    [Description("STATUS_WAIT_RESEND")]
+        //    STATUS_WAIT_RESEND,
+
+        //    [Description("STATUS_CANCEL")]
+        //    STATUS_CANCEL,
+
+        //    [Description("STATUS_OK")]
+        //    STATUS_OK
+        //}
 
         public enum ErrorStatuses
         {
@@ -85,6 +103,30 @@ namespace TestingFramework.Services.REST.SmsRegApi
             return int.Parse(otherServiceNumbersNode.ToString()); 
         }
 
+        public static int GetAvailableNumberForService(string serviceName)
+        {
+            var parsedAvailableNumbers = GetAvailableNumbers();
+            var otherServiceNumbersNode = parsedAvailableNumbers[serviceName];
+            return int.Parse(otherServiceNumbersNode.ToString());
+        }
+
+        //public int CheckIfNumbersForOtherServiceAvailable()
+        //{
+        //    return CheckIfNumbersAvailableForService("ot");
+        //}
+
+        //public int CheckIfNumbersAvailableForService(string serviceName)
+        //{
+        //    retu
+
+        //}
+
+        public string GetSmsText(string activationId)
+        {
+            var response = client.DownloadString(BaseUrl + $"&action=getFullSms&id={activationId}");
+            return response;
+        }
+
         public static string GetPhoneExceptionsParameter(string[] phoneExceptions)
         {
             string stringWithExceptionNumbers = null; 
@@ -96,28 +138,29 @@ namespace TestingFramework.Services.REST.SmsRegApi
             return "&phoneException=" + stringWithExceptionNumbers;
         }
 
-        public static Dictionary<string, string> GetNumber(string serviceName, int forward, string operatorName, int refCode, CountryName country, string[] phoneExceptions)
+        public static GetNumberViewModel GetNumber(string serviceName, int forward, string operatorName, int refCode, CountryName country, string[] phoneExceptions)
         {
-            var downloadString = $"{BaseUrl}&action=getNumber&service={serviceName}&forward={forward}&country={country}";
+            var downloadString = $"{BaseUrl}&action=getNumber&service={serviceName}&forward={forward}&country={(int)country}";
             downloadString = refCode == 0 ? downloadString + string.Empty : downloadString + $"&ref={refCode}";
-            downloadString = phoneExceptions.Length == 0 ? downloadString + string.Empty : downloadString + GetPhoneExceptionsParameter(phoneExceptions);
+            if (phoneExceptions != null)
+                downloadString = phoneExceptions.Length == 0 ? downloadString + string.Empty : downloadString + GetPhoneExceptionsParameter(phoneExceptions);
             var response = client.DownloadString(downloadString);
             var parsedData = response.Split(':').ToList().Skip(1);
-            var data = new Dictionary<string, string>()
+
+            return new GetNumberViewModel
             {
-                {"Id", parsedData.ElementAt(0)},
-                {"PhoneNumber", parsedData.ElementAt(1)}
+                Id = parsedData.ElementAt(0),
+                PhoneNumber = parsedData.ElementAt(1)
             };
-            return data;
         }
 
-        public static Dictionary<string, string> GetNumberForOtherService(string serviceName = "ot_0", int forward = 0, string operatorName = null, int refCode = 0, 
+        public static GetNumberViewModel GetNumberForOtherService(string serviceName = "ot", int forward = 0, string operatorName = null, int refCode = 0, 
             CountryName country = CountryName.Ukraine, string[] phoneExceptions = null)
         {
             return GetNumber(serviceName, forward, operatorName, refCode, country, phoneExceptions);
         }
 
-        public static string SetStatus(string status, string id, string forward)
+        public static string SetStatus(int status, string id, int forward)
         {
             var response = client.DownloadString(BaseUrl + $"&action=setStatus&status={status}&id={id}&forward={forward}");
             return response;
@@ -141,7 +184,8 @@ namespace TestingFramework.Services.REST.SmsRegApi
                 //кинуть  эксепшен
             }
             code = splittedData.ElementAt(2);
-            return code;
+            //return code;
+            return test;
         }
 
         //public static string GetStatus(string id)
