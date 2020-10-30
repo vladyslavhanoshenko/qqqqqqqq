@@ -61,6 +61,7 @@ namespace TestingFramework.Tests.Dominos
         public void DominosReg()
         {
             var test123 = SmsRegApiService.GetAvailableNumberForOtherServices();
+            var activationData = SmsRegApiService.GetNumberForOtherService();
             var domainNamesList = tempMailApi.GetDomainsList();
             var fullEmailAddress = MailBoxName + domainNamesList.First();
 

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 
 namespace TestingFramework.Helpers
@@ -20,6 +21,16 @@ namespace TestingFramework.Helpers
             var resultRegex = regex.Match(text);
             var result = regex.Match(text).Value;
             return result;
+        }
+
+        public static T ParseEnum<T>(string value)
+        {
+            return (T)Enum.Parse(typeof(T), value, true);
+        }
+
+        public static T ToEnum<T>(this string value)
+        {
+            return (T)Enum.Parse(typeof(T), value, false);
         }
     }
 }

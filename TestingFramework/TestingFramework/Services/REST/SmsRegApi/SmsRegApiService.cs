@@ -1,9 +1,11 @@
 ﻿
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using TestingFramework.Helpers;
 
 namespace TestingFramework.Services.REST.SmsRegApi
 {
@@ -19,7 +21,7 @@ namespace TestingFramework.Services.REST.SmsRegApi
             Ukraine = 1,
         }
 
-        public enum Statuses
+        public enum ChangeStatusCodes
         {
             [Description("ACCESS_READY")]
             ACCESS_READY,
@@ -32,7 +34,24 @@ namespace TestingFramework.Services.REST.SmsRegApi
 
             [Description("ACCESS_RETRY_GET")]
             ACCESS_RETRY_GET
+        }
 
+        public enum GetStatusCodes
+        {
+            [Description("STATUS_WAIT_CODE ")]
+            STATUS_WAIT_CODE,
+
+            [Description("STATUS_WAIT_RETRY")]
+            STATUS_WAIT_RETRY,
+
+            [Description("STATUS_WAIT_RESEND")]
+            STATUS_WAIT_RESEND,
+
+            [Description("STATUS_CANCEL")]
+            STATUS_CANCEL,
+
+            [Description("STATUS_OK")]
+            STATUS_OK
         }
 
         public enum ErrorStatuses
@@ -66,9 +85,23 @@ namespace TestingFramework.Services.REST.SmsRegApi
             return int.Parse(otherServiceNumbersNode.ToString()); 
         }
 
-        public static Dictionary<string, string> GetNumber(string serviceName, string forward, string operatorName, string refName, string contryName)
+        public static string GetPhoneExceptionsParameter(string[] phoneExceptions)
         {
-            var response = client.DownloadString(BaseUrl + $"&action=getNumber&service={serviceName}&forward={forward}&operator={operatorName}&ref={refName}&country={contryName}");
+            string stringWithExceptionNumbers = null; 
+
+            foreach(var phone in phoneExceptions)
+            {
+                stringWithExceptionNumbers += $",{phone}";
+            }
+            return "&phoneException=" + stringWithExceptionNumbers;
+        }
+
+        public static Dictionary<string, string> GetNumber(string serviceName, int forward, string operatorName, int refCode, CountryName country, string[] phoneExceptions)
+        {
+            var downloadString = $"{BaseUrl}&action=getNumber&service={serviceName}&forward={forward}&country={country}";
+            downloadString = refCode == 0 ? downloadString + string.Empty : downloadString + $"&ref={refCode}";
+            downloadString = phoneExceptions.Length == 0 ? downloadString + string.Empty : downloadString + GetPhoneExceptionsParameter(phoneExceptions);
+            var response = client.DownloadString(downloadString);
             var parsedData = response.Split(':').ToList().Skip(1);
             var data = new Dictionary<string, string>()
             {
@@ -78,10 +111,10 @@ namespace TestingFramework.Services.REST.SmsRegApi
             return data;
         }
 
-        public static Dictionary<string, string> GetNumber(string serviceName = "ot_0", int forward = 0, string operatorName = null, int refCode = 0, 
+        public static Dictionary<string, string> GetNumberForOtherService(string serviceName = "ot_0", int forward = 0, string operatorName = null, int refCode = 0, 
             CountryName country = CountryName.Ukraine, string[] phoneExceptions = null)
         {
-            return null;
+            return GetNumber(serviceName, forward, operatorName, refCode, country, phoneExceptions);
         }
 
         public static string SetStatus(string status, string id, string forward)
@@ -90,9 +123,12 @@ namespace TestingFramework.Services.REST.SmsRegApi
             return response;
         }
 
-        public static string GetStatus(string id)
+        public static GetStatusCodes GetStatus(string id)
         {
-            string response = string.Empty;
+            var response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
+            var test = response.ToEnum<GetStatusCodes>();
+            var parsedEnumResponse = Enum.Parse(typeof(GetStatusCodes), response);
+
             string code = string.Empty;
             while (!response.Contains("STATUS_OK"))
             {
@@ -107,6 +143,24 @@ namespace TestingFramework.Services.REST.SmsRegApi
             code = splittedData.ElementAt(2);
             return code;
         }
+
+        //public static string GetStatus(string id)
+        //{
+        //    string response = string.Empty;
+        //    string code = string.Empty;
+        //    while (!response.Contains("STATUS_OK"))
+        //    {
+        //        response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
+        //    }
+        //    var splittedData = response.Split(':').ToList();
+        //    if (splittedData.Count != 3)
+        //    {
+        //        //добавить запись ошибки в файл
+        //        //кинуть  эксепшен
+        //    }
+        //    code = splittedData.ElementAt(2);
+        //    return code;
+        //}
 
 
     }
