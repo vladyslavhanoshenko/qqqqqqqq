@@ -38,17 +38,31 @@ namespace TestingFramework.Tests.Dominos
             return wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath("//div[@class='modal-dialog modal-lg']//div[@class='modal-content']")));
         }
         
-        [SetUp]
-        public void DriverSetUp()
+        //[SetUp]
+        //public void DriverSetUp()
+        //{
+        //    ChromeOptions options = new ChromeOptions();
+        //    //options.AddArguments("--incognito");
+        //    options.AddArguments("--disable-notifications");
+        //    options.AddArguments("--disable-geolocation");
+        //    options.AddArguments("--disable-extensions");
+        //    options.AddArguments("start-maximized");
+        //    options.AddArguments("disable-infobars");
+           
+        //    driver = new ChromeDriver(driverPath, options);
+        //    driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
+        //    Driver.driver = driver;
+        //}
+
+        public void DriverSetup()
         {
             ChromeOptions options = new ChromeOptions();
-            //options.AddArguments("--incognito");
             options.AddArguments("--disable-notifications");
             options.AddArguments("--disable-geolocation");
             options.AddArguments("--disable-extensions");
             options.AddArguments("start-maximized");
             options.AddArguments("disable-infobars");
-           
+
             driver = new ChromeDriver(driverPath, options);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
             Driver.driver = driver;
@@ -60,41 +74,24 @@ namespace TestingFramework.Tests.Dominos
         [Test]
         public void DominosReg()
         {
-            var domainNamesList = tempMailApi.GetDomainsList();
-            var fullEmailAddress = MailBoxName + domainNamesList.First();
-
-            DominosContext dominosContext = new DominosContext(driver);
-            dominosContext.RegisterAccount(fullEmailAddress, Password);
-
-            var test = tempMailApi.GetMailsWithWait(fullEmailAddress.ToMd5Hash());
-            var verificationLink = test.Single().MailText.GetDominosUrl();
-
-            
-
-
-
-            dominosContext.VerifyAccont(verificationLink);
-            
-
-
-
-            
-
-
-            Console.ReadKey();
-
-
-
+            for(int i = 0; i < 20; i++)
+            {
+                DriverSetup();
+                var domainNamesList = tempMailApi.GetDomainsList();
+                var fullEmailAddress = MailBoxName + domainNamesList.First();
+                DominosContext dominosContext = new DominosContext(driver);
+                dominosContext.RegisterAccount(fullEmailAddress, Password);
+                var test = tempMailApi.GetMailsWithWait(fullEmailAddress.ToMd5Hash());
+                var verificationLink = test.Single().MailText.GetDominosUrl();
+                dominosContext.VerifyAccont(verificationLink);
+                Driver.driver.Quit();
+            }
         }
 
-
-
-
-
-        [TearDown]
-        public void SmsActivateTearDown()
-        {
-            driver.Quit();
-        }
+        //[TearDown]
+        //public void SmsActivateTearDown()
+        //{
+        //    driver.Quit();
+        //}
     }
 }

@@ -3,8 +3,10 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using TestingFramework.Helpers;
 
 namespace TestingFramework.Services.REST.SmsRegApi
@@ -121,7 +123,7 @@ namespace TestingFramework.Services.REST.SmsRegApi
 
         //}
 
-        public string GetSmsText(string activationId)
+        public static string GetSmsText(string activationId)
         {
             var response = client.DownloadString(BaseUrl + $"&action=getFullSms&id={activationId}");
             return response;
@@ -169,24 +171,49 @@ namespace TestingFramework.Services.REST.SmsRegApi
         public static GetStatusCodes GetStatus(string id)
         {
             var response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
-            var test = response.ToEnum<GetStatusCodes>();
-            var parsedEnumResponse = Enum.Parse(typeof(GetStatusCodes), response);
-
-            string code = string.Empty;
-            while (!response.Contains("STATUS_OK"))
-            {
-                response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
-            }
-            var splittedData = response.Split(':').ToList();
-            if (splittedData.Count != 3)
-            {
-                //добавить запись ошибки в файл
-                //кинуть  эксепшен
-            }
-            code = splittedData.ElementAt(2);
-            //return code;
-            return test;
+            var parsedEnum = response.ToEnum<GetStatusCodes>();
+            return parsedEnum;
         }
+
+        public static void WaitUntilSmsTextIsReady(string id)
+        {
+            var statusCode = GetStatus(id);
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            while (statusCode != GetStatusCodes.STATUS_OK && sw.Elapsed.TotalSeconds != 120)
+            {
+                statusCode = GetStatus(id);
+
+                if (sw.Elapsed.TotalSeconds > 140)
+                {
+                    sw.Stop();
+                    throw new TimeoutException("Code haven't received after 140 second");
+                }
+            }
+        }
+        //public static GetStatusCodes GetStatus(string id)
+        //{
+        //    var response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
+        //    var test = response.ToEnum<GetStatusCodes>();
+        //    var parsedEnumResponse = Enum.Parse(typeof(GetStatusCodes), response);
+
+        //    string code = string.Empty;
+        //    while (!response.Contains("STATUS_OK"))
+        //    {
+        //        response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
+        //    }
+        //    var splittedData = response.Split(':').ToList();
+        //    if (splittedData.Count != 3)
+        //    {
+        //        //добавить запись ошибки в файл
+        //        //кинуть  эксепшен
+        //    }
+        //    code = splittedData.ElementAt(2);
+        //    //return code;
+        //    return test;
+        //}
 
         //public static string GetStatus(string id)
         //{

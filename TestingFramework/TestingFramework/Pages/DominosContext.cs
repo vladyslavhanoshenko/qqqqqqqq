@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using System;
 using TestingFramework.Commons;
 using TestingFramework.Helpers;
 using TestingFramework.Services.REST.SmsRegApi;
@@ -42,25 +43,40 @@ namespace TestingFramework.Pages
             _mainPage.SubmitRegistrationButton.GetElement().Click();
         }
 
-        public void AddPhoneNumber()
+        public void WaitForNumbersForOtherServices()
         {
             var availableNumbers = SmsRegApiService.GetAvailableNumberForOtherServices();
-            if (availableNumbers > 0)
+
+            while (availableNumbers < 1)
             {
-                //add waiter for numbers
+                availableNumbers = SmsRegApiService.GetAvailableNumberForOtherServices();
             }
+        }
+
+        public void AddPhoneNumber()
+        {
+            WaitForNumbersForOtherServices();
             var activationData = SmsRegApiService.GetNumberForOtherService();
             var operatorCode = activationData.PhoneNumber.Substring(0, 5).Remove(0, 2);
             var numberWithoutOperatorCode = activationData.PhoneNumber.Remove(0, 5);
-            SmsRegApiService.SetStatus(8, activationData.Id, 0);
+            
             dominosRegistrationPageSteps.SelectOperatorCode(operatorCode);
             dominosRegistrationPageSteps.SetPhoneNumber(numberWithoutOperatorCode);
             dominosRegistrationPageSteps.ClickPhoneSaveButton();
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupDisplayed();
-            phoneNumberConfirmationPopupSteps.SetSmsCode(null);
+
+            SmsRegApiService.SetStatus(1, activationData.Id, 0);
+            SmsRegApiService.WaitUntilSmsTextIsReady(activationData.Id);
+            var smsText = SmsRegApiService.GetSmsText(activationData.Id);
+            var splittedText = smsText.Split(':');
+            var code = splittedText[1];
+
+            phoneNumberConfirmationPopupSteps.SetSmsCode(code);
             phoneNumberConfirmationPopupSteps.ClickSmsConfirmationButton();
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupIsNotDisplayed();
+            SmsRegApiService.SetStatus(8, activationData.Id, 0);
         }
+
         public void VerifyAccont(string url)
         {
             dominosRegistrationPageSteps.OpenConfirmationLink(url);
@@ -68,13 +84,14 @@ namespace TestingFramework.Pages
             dominosRegistrationPageSteps.SetFirstName("Vladyslav");
             dominosRegistrationPageSteps.SetLastName("Petrov");
             AddPhoneNumber();
-            
-            dominosRegistrationPageSteps.SetDateOfBirth(null);
-            dominosRegistrationPageSteps.SelectSex(null);
+
+            DateTime datetime = DateTime.Now.AddDays(9).AddYears(-25);
+            var shortformat = datetime.ToShortDateString();
+            dominosRegistrationPageSteps.SetDateOfBirth(shortformat);
+            dominosRegistrationPageSteps.SelectSex("Чоловік");
             dominosRegistrationPageSteps.CheckConfirmationCheckbox();
             dominosRegistrationPageSteps.ClickConfirmationButton();
-            
-
+            dominosRegistrationPageSteps.WaitUntilRegistrationPageClosed();
         }
     }
 }

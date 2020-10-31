@@ -98,6 +98,7 @@
     <Compile Include="Steps\DominosRegistrationPageStepsBase.cs" />
     <Compile Include="Steps\PhoneNumberConfirmationPopupSteps.cs" />
     <Compile Include="Tests\Dominos\AccountReg.cs" />
+    <Compile Include="Tests\Dominos\TestClass.cs" />
     <Compile Include="Tests\WordPress\FileWriter.cs" />
     <Compile Include="Tests\WordPress\HttpRequests.cs" />
     <Compile Include="Tests\WordPress\InstaChecker.cs" />

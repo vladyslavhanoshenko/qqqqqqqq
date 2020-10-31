@@ -10,14 +10,11 @@ namespace TestingFramework.Pages
         public By LastName = By.XPath("//input[@name='last_name']");
         public By Email = By.XPath("//input[@name='email']");
         public By Phone = By.XPath("//input[@name='number']");
-        public By PhoneSaveButton = By.XPath("//div[@class='modal-location__body']");
+        public By PhoneSaveButton = By.XPath("//div[contains(@class, 'phone-item-button-text')]");
         public By OperatorCodesDropDownExpander = By.XPath("//div[contains(@class, 'phone-item-select__item-codes')]");
         public By OperatorCodesDropDown = By.XPath("//div[contains(@class, ' css-11unzgr')]");
-        public By DateOfBirth = By.XPath("//input[@placeholder='DD-MM-YYYY']");
-        public By Sex = By.XPath("//div[@class='modal-location__body']");
-        public By SubmitCheckbox = By.XPath("//div[@class='modal-location__body']");
-        public By SubmitButton = By.XPath("//div[@class='modal-location__body']");
-       
-        //public IWebElement SubmitElement => SubmitButton.GetElement();
+        public By DateOfBirth = By.XPath("//div[contains(@class, 'react-datepicker')]//input");
+        public By SubmitCheckbox = By.XPath("//div[contains(@class, 'dp-checkbox')]//input");
+        public By SubmitButton = By.XPath("//div[contains(@class, 'order-button-wrap')]");
     }
 }

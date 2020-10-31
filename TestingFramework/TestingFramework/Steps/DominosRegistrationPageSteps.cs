@@ -61,12 +61,15 @@ namespace TestingFramework.Steps
         public void SetDateOfBirth(string dateOfBirth)
         {
             registrationPage.DateOfBirth.GetElement().SendKeys(dateOfBirth);
+            registrationPage.DateOfBirth.GetElement().Click();
         }
 
         public void SelectSex(string sex)
         {
+            var expandButton = Driver.driver.FindElement(By.XPath("//input[@name='gender']//..//div[contains(@class, 'dp-select__down')]"));
+            expandButton.Click();
             var dropDownElements = Driver.driver.FindElements(By.XPath("//input[@name='gender']/..//div[@class='dp-select__drop-down']/div")).ToList();
-            var itemToBeSelected = dropDownElements.Single(i => i.Equals(sex));
+            var itemToBeSelected = dropDownElements.Single(i => i.Text.Equals(sex));
             itemToBeSelected.Click();
         }
 
@@ -78,6 +81,28 @@ namespace TestingFramework.Steps
         public void ClickConfirmationButton()
         {
             registrationPage.SubmitButton.GetElement().Click();
+        }
+
+        public void WaitUntilRegistrationPageClosed()
+        {
+            wait.Until(condition =>
+            {
+                var isElementDisplayed = registrationPage.SubmitButton.GetElement().Displayed;
+
+                try
+                {
+                    var elementToBeDisplayed = registrationPage.SubmitButton.GetElement().Displayed;
+                    return elementToBeDisplayed;
+                }
+                catch (StaleElementReferenceException)
+                {
+                    return false;
+                }
+                catch (NoSuchElementException)
+                {
+                    return false;
+                }
+            });
         }
     }
 }
