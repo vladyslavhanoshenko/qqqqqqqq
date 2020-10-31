@@ -171,7 +171,8 @@ namespace TestingFramework.Services.REST.SmsRegApi
         public static GetStatusCodes GetStatus(string id)
         {
             var response = client.DownloadString(BaseUrl + $"&action=getStatus&id={id}");
-            var parsedEnum = response.ToEnum<GetStatusCodes>();
+            var splittedResponse = response.Split(':');
+            var parsedEnum = splittedResponse[0].ToEnum<GetStatusCodes>();
             return parsedEnum;
         }
 

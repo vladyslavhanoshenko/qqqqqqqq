@@ -26,7 +26,7 @@ namespace TestingFramework.Steps
         {
             wait.Until(condition => 
             {
-                var isElementDisplayed = registrationPage.phoneNumberConfirmationPopup.ConfirmButton.GetElement().Displayed;
+                
 
                 try
                 {
@@ -39,7 +39,7 @@ namespace TestingFramework.Steps
                 }
                 catch (NoSuchElementException)
                 {
-                    return false;
+                    return true;
                 }
             });
         }

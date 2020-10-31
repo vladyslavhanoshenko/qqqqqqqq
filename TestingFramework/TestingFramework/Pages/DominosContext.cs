@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Linq;
 using TestingFramework.Commons;
 using TestingFramework.Helpers;
 using TestingFramework.Services.REST.SmsRegApi;
@@ -69,7 +70,7 @@ namespace TestingFramework.Pages
             SmsRegApiService.WaitUntilSmsTextIsReady(activationData.Id);
             var smsText = SmsRegApiService.GetSmsText(activationData.Id);
             var splittedText = smsText.Split(':');
-            var code = splittedText[1];
+            var code = splittedText.Last();
 
             phoneNumberConfirmationPopupSteps.SetSmsCode(code);
             phoneNumberConfirmationPopupSteps.ClickSmsConfirmationButton();
