@@ -15,7 +15,7 @@ namespace TestingFramework.Tests.WordPress
         string emptyFileToRewrite = @"F:\qqqqqqqq\TestingFramework\ToRewrite.txt";
         public string filePath = @"F:\qqqqqqqq\TestingFramework\all2.xlsx";
         string writePath = @"F:\qqqqqqqq\TestingFramework\LoginsAndPasswords.txt";
-        ExcelFileReader ExcelReader = new ExcelFileReader();
+        ExcelFileHelpers ExcelReader = new ExcelFileHelpers();
         ReadersAndWritersToOrFromFile WriteAndReadHelper = new ReadersAndWritersToOrFromFile();
 
         [Test]

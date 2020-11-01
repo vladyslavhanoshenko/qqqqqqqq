@@ -3,9 +3,11 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TestingFramework.Commons;
 using TestingFramework.Helpers;
+using TestingFramework.Models;
 using TestingFramework.Pages;
 using TestingFramework.Services.REST.SmsRegApi;
 using TestingFramework.Services.REST.TempMailOrg;
@@ -24,6 +26,8 @@ namespace TestingFramework.Tests.Dominos
         //public string Password = "kzARnxTW25ASb-r";
         
         string driverPath = @"F:\qqqqqqqq\TestingFramework\TestingFramework";
+
+        public string excelFileSavePath = @"F:\dominosaccounts.xlsx";
         private Random random = new Random();
         private int numForEmail => random.Next(10000);
         private string MailBoxName => $"petrov{numForEmail}";
@@ -74,18 +78,50 @@ namespace TestingFramework.Tests.Dominos
         [Test]
         public void DominosReg()
         {
-            for(int i = 0; i < 20; i++)
+            var dominosCreatedAccounts = new List<DominosCreatedAccountEntity>();
+
+            try
             {
-                DriverSetup();
-                var domainNamesList = tempMailApi.GetDomainsList();
-                var fullEmailAddress = MailBoxName + domainNamesList.First();
-                DominosContext dominosContext = new DominosContext(driver);
-                dominosContext.RegisterAccount(fullEmailAddress, Password);
-                var test = tempMailApi.GetMailsWithWait(fullEmailAddress.ToMd5Hash());
-                var verificationLink = test.Single().MailText.GetDominosUrl();
-                dominosContext.VerifyAccont(verificationLink);
-                Driver.driver.Quit();
+                
+
+                for (int i = 0; i < 20; i++)
+                {
+                    DriverSetup();
+                    var domainNamesList = tempMailApi.GetDomainsList();
+                    var fullEmailAddress = MailBoxName + domainNamesList.First();
+
+
+                    DominosCreatedAccountEntity accountData = new DominosCreatedAccountEntity
+                    {
+                        Email = fullEmailAddress,
+                        FirstName = "Vladyslav",
+                        LastName = "Petrov",
+                        Sex = "Чоловік"
+                    };
+
+                    var numberOfProperties = accountData.GetType().GetProperties();
+
+                    DominosContext dominosContext = new DominosContext(driver);
+                    dominosContext.RegisterAccount(fullEmailAddress, Password);
+                    var emailText = tempMailApi.GetMailsWithWait(fullEmailAddress.ToMd5Hash());
+                    var verificationLink = emailText.Single().MailText.GetDominosUrl();
+                    dominosContext.VerifyAccont(verificationLink, accountData);
+                    Driver.driver.Quit();
+
+                    dominosCreatedAccounts.Add(accountData);
+                }
+
+                ExcelFileHelpers.WriteDominosAccountsDataToExcel(excelFileSavePath, dominosCreatedAccounts.ToArray());
+
             }
+            catch(Exception e)
+            {
+                ExcelFileHelpers.WriteDominosAccountsDataToExcel(excelFileSavePath, dominosCreatedAccounts.ToArray());
+                Console.WriteLine(e.Message);
+
+            }
+
+            
         }
 
         //[TearDown]

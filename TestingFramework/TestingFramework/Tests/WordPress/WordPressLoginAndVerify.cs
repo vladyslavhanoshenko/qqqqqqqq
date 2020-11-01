@@ -23,7 +23,7 @@ namespace TestingFramework
     [Parallelizable(ParallelScope.Self)]
     public class WordPressLoginAndVerify
     {
-        ExcelFileReader ExcelReader = new ExcelFileReader();
+        ExcelFileHelpers ExcelReader = new ExcelFileHelpers();
         ReadersAndWritersToOrFromFile WriteAndReadHelper = new ReadersAndWritersToOrFromFile();
 
         ErrorsChecker ErrorChecker = new ErrorsChecker();

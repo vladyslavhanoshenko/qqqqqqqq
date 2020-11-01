@@ -11,7 +11,7 @@ namespace TestingFramework.Tests.WordPress
     [TestFixture]
     class HttpRequests
     {
-        ExcelFileReader ExcelReader = new ExcelFileReader();
+        ExcelFileHelpers ExcelReader = new ExcelFileHelpers();
         ReadersAndWritersToOrFromFile WriteAndReadFile = new ReadersAndWritersToOrFromFile();
         string indexFileReaderPath = @"F:\TestingFramework\IndexFileReader.txt";
         string indexFileWriterPath = @"F:\TestingFramework\IndexFileReader.txt";

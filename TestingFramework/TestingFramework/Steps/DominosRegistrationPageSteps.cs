@@ -60,8 +60,11 @@ namespace TestingFramework.Steps
 
         public void SetDateOfBirth(string dateOfBirth)
         {
-            registrationPage.DateOfBirth.GetElement().SendKeys(dateOfBirth);
-            registrationPage.DateOfBirth.GetElement().Click();
+            var dateOfBirthInput = registrationPage.DateOfBirth.GetElement();
+            dateOfBirthInput.SendKeys(dateOfBirth);
+
+           
+            registrationPage.FirstName.GetElement().Click();
         }
 
         public void SelectSex(string sex)

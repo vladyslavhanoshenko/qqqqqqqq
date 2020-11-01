@@ -14,7 +14,7 @@ namespace TestingFramework.Pages
         public By OperatorCodesDropDownExpander = By.XPath("//div[contains(@class, 'phone-item-select__item-codes')]");
         public By OperatorCodesDropDown = By.XPath("//div[contains(@class, ' css-11unzgr')]");
         public By DateOfBirth = By.XPath("//div[contains(@class, 'react-datepicker')]//input");
-        public By SubmitCheckbox = By.XPath("//div[contains(@class, 'dp-checkbox')]//input");
+        public By SubmitCheckbox = By.XPath("//div[contains(@class, 'dp-checkbox')]//span[contains(@class, 'dp-checkbox__icon')]");
         public By SubmitButton = By.XPath("//div[contains(@class, 'order-button-wrap')]");
     }
 }

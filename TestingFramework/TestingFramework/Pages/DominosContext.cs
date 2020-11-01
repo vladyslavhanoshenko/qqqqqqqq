@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using TestingFramework.Commons;
 using TestingFramework.Helpers;
+using TestingFramework.Models;
 using TestingFramework.Services.REST.SmsRegApi;
 using TestingFramework.Steps;
 
@@ -28,10 +29,10 @@ namespace TestingFramework.Pages
         {
             _mainPage.OpenMainPage();
 
-            if (_mainPage.LocationSelectPopUp.Exists())
-            {
-                _mainPage.LocationSelectPopUpCloseButton.GetElement().Click();
-            }
+            //if (_mainPage.LocationSelectPopUp.Exists())
+            //{
+            //    _mainPage.LocationSelectPopUpCloseButton.GetElement().Click();
+            //}
             _mainPage.OpenLoginPopupButton.GetElement().Click();
             wait.Until(ExpectedConditions.ElementIsVisible(_mainPage.RegisterButton));
             Actions action = new Actions(Driver.driver);
@@ -54,7 +55,7 @@ namespace TestingFramework.Pages
             }
         }
 
-        public void AddPhoneNumber()
+        public string AddPhoneNumber()
         {
             WaitForNumbersForOtherServices();
             var activationData = SmsRegApiService.GetNumberForOtherService();
@@ -76,20 +77,24 @@ namespace TestingFramework.Pages
             phoneNumberConfirmationPopupSteps.ClickSmsConfirmationButton();
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupIsNotDisplayed();
             SmsRegApiService.SetStatus(8, activationData.Id, 0);
+
+            return activationData.PhoneNumber;
         }
 
-        public void VerifyAccont(string url)
+        public void VerifyAccont(string url, DominosCreatedAccountEntity accountData)
         {
             dominosRegistrationPageSteps.OpenConfirmationLink(url);
             dominosRegistrationPageSteps.WaitUntilRegistrationPageOpened();
-            dominosRegistrationPageSteps.SetFirstName("Vladyslav");
-            dominosRegistrationPageSteps.SetLastName("Petrov");
-            AddPhoneNumber();
+            dominosRegistrationPageSteps.SetFirstName(accountData.FirstName);
+            dominosRegistrationPageSteps.SetLastName(accountData.LastName);
+            accountData.PhoneNumber = AddPhoneNumber();
 
             DateTime datetime = DateTime.Now.AddDays(9).AddYears(-25);
             var shortformat = datetime.ToShortDateString();
-            dominosRegistrationPageSteps.SetDateOfBirth(shortformat);
-            dominosRegistrationPageSteps.SelectSex("Чоловік");
+            accountData.Date = shortformat;
+
+            dominosRegistrationPageSteps.SetDateOfBirth(accountData.Date);
+            dominosRegistrationPageSteps.SelectSex(accountData.Sex);
             dominosRegistrationPageSteps.CheckConfirmationCheckbox();
             dominosRegistrationPageSteps.ClickConfirmationButton();
             dominosRegistrationPageSteps.WaitUntilRegistrationPageClosed();

@@ -16,7 +16,7 @@ namespace TestingFramework.Tests.WordPress
     class MultithreadRun
     {
         WordPressLoginAndVerify runner = new WordPressLoginAndVerify();
-        ExcelFileReader ExcelReader = new ExcelFileReader();
+        ExcelFileHelpers ExcelReader = new ExcelFileHelpers();
         ReadersAndWritersToOrFromFile WriteAndReadHelper = new ReadersAndWritersToOrFromFile();
         WordPressAdminLoginPage LoginPage = new WordPressAdminLoginPage();
         string indexFileReaderPath = @"F:\qqqqqqqq\TestingFramework\IndexFileReader.txt";

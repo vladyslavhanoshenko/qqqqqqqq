@@ -77,6 +77,7 @@
     <Compile Include="Helpers\ErrorsChecker.cs" />
     <Compile Include="Helpers\ExtensionsMethods.cs" />
     <Compile Include="Helpers\ReadersAndWritersToOrFromFile.cs" />
+    <Compile Include="Models\DominosCreatedAccountEntity.cs" />
     <Compile Include="Services\REST\SmsRegApi\GetNumberViewModel.cs" />
     <Compile Include="Services\REST\SmsRegApi\SmsRegApiService.cs" />
     <Compile Include="Helpers\StatusChecker.cs" />
@@ -106,7 +107,7 @@
     <Compile Include="Tests\WordPress\PostRequest.cs" />
     <Compile Include="Tests\WordPress\ResponseModel.cs" />
     <Compile Include="Tests\WordPress\WordPressLoginAndVerify.cs" />
-    <Compile Include="Helpers\ExcelFileReader.cs" />
+    <Compile Include="Helpers\ExcelFileHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
