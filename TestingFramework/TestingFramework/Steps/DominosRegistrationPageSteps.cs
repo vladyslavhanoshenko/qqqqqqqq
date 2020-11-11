@@ -86,6 +86,7 @@ namespace TestingFramework.Steps
             registrationPage.SubmitButton.GetElement().Click();
         }
 
+
         public void WaitUntilRegistrationPageClosed()
         {
             wait.Until(condition =>

@@ -11,6 +11,7 @@ namespace TestingFramework.Pages
         public By LocationSelectPopUp = By.XPath("//div[@class='modal-location__body']");
         public By LocationSelectPopUpCloseButton = By.XPath("//button[@class='dp-modal__close-btn']");
         public By OpenLoginPopupButton = By.XPath("//div[@class='fake-header__sing-in-block']/button");
+        public By LoadingSpinner = By.XPath("//div[contains(@class, 'dp-spinner')]");
         public By LoginPopup = By.XPath("//div[@class='dp-modal__body']");
         public By RegisterButton = By.XPath("//button[contains(text(), 'Регистрация') or contains(text(), 'Реєстрація')]");
         public By EmailField = By.XPath("//input[@placeholder='Ваш email']");

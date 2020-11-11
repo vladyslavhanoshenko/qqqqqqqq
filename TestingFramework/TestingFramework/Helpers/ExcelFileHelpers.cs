@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,6 +84,10 @@ namespace TestingFramework.Helpers
 
             //oXL.Visible = false;
             //oXL.UserControl = false;
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
             oWB.SaveAs(filePath, XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
                 false, false, XlSaveAsAccessMode.xlNoChange,
                 Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);

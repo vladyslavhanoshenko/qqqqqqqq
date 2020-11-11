@@ -68,7 +68,7 @@ namespace TestingFramework.Tests.Dominos
             options.AddArguments("disable-infobars");
 
             driver = new ChromeDriver(driverPath, options);
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             Driver.driver = driver;
         }
 
@@ -82,8 +82,6 @@ namespace TestingFramework.Tests.Dominos
 
             try
             {
-                
-
                 for (int i = 0; i < 20; i++)
                 {
                     DriverSetup();

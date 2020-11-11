@@ -37,7 +37,7 @@ namespace TestingFramework.Pages
             wait.Until(ExpectedConditions.ElementIsVisible(_mainPage.RegisterButton));
             Actions action = new Actions(Driver.driver);
             action.MoveToElement(_mainPage.RegisterButton.GetElement()).Perform();
-            
+
             _mainPage.RegisterButton.GetElement().Click();
             _mainPage.EmailField.GetElement().SendKeys(email);
             _mainPage.PasswordField.GetElement().SendKeys(password);
@@ -45,6 +45,18 @@ namespace TestingFramework.Pages
             _mainPage.SubmitRegistrationButton.GetElement().Click();
         }
 
+        public void OpenRegistrationPanel()
+        {
+            wait.Until(ExpectedConditions.ElementIsVisible(_mainPage.RegisterButton));
+            Actions action = new Actions(Driver.driver);
+            action.MoveToElement(_mainPage.RegisterButton.GetElement()).Perform();
+            _mainPage.RegisterButton.GetElement().Click();
+            if (_mainPage.RegisterButton.Exists())
+            {
+                _mainPage.RegisterButton.GetElement().Click();
+            }
+            wait.Until(ExpectedConditions.ElementIsVisible(_mainPage.EmailField));
+        }
         public void WaitForNumbersForOtherServices()
         {
             var availableNumbers = SmsRegApiService.GetAvailableNumberForOtherServices();
@@ -76,7 +88,7 @@ namespace TestingFramework.Pages
             phoneNumberConfirmationPopupSteps.SetSmsCode(code);
             phoneNumberConfirmationPopupSteps.ClickSmsConfirmationButton();
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupIsNotDisplayed();
-            SmsRegApiService.SetStatus(8, activationData.Id, 0);
+            SmsRegApiService.SetStatus(6, activationData.Id, 0);
 
             return activationData.PhoneNumber;
         }
@@ -89,7 +101,7 @@ namespace TestingFramework.Pages
             dominosRegistrationPageSteps.SetLastName(accountData.LastName);
             accountData.PhoneNumber = AddPhoneNumber();
 
-            DateTime datetime = DateTime.Now.AddDays(9).AddYears(-25);
+            DateTime datetime = DateTime.Now.AddDays(20).AddYears(-25);
             var shortformat = datetime.ToShortDateString();
             accountData.Date = shortformat;
 
