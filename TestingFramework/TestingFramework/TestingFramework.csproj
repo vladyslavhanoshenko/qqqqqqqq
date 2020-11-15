@@ -78,6 +78,7 @@
     <Compile Include="Helpers\ExtensionsMethods.cs" />
     <Compile Include="Helpers\ReadersAndWritersToOrFromFile.cs" />
     <Compile Include="Models\DominosCreatedAccountEntity.cs" />
+    <Compile Include="Pages\DominosProfilePage.cs" />
     <Compile Include="Services\REST\SmsRegApi\GetNumberViewModel.cs" />
     <Compile Include="Services\REST\SmsRegApi\SmsRegApiService.cs" />
     <Compile Include="Helpers\StatusChecker.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Services\REST\TempMailOrg\Models\EmailViewModel.cs" />
     <Compile Include="Services\REST\TempMailOrg\TempMailApi.cs" />
     <Compile Include="Services\REST\TempMailOrg\TempMailApiContext.cs" />
+    <Compile Include="Steps\DominosProfileSteps.cs" />
     <Compile Include="Steps\DominosRegistrationPageSteps.cs" />
     <Compile Include="Steps\DominosRegistrationPageStepsBase.cs" />
     <Compile Include="Steps\PhoneNumberConfirmationPopupSteps.cs" />

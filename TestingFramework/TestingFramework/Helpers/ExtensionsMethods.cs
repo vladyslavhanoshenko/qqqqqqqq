@@ -1,11 +1,22 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 
 namespace TestingFramework.Helpers
 {
-    static class ExtensionsMethods
+    public static class ExtensionsMethods
     {
+        private static Random random = new Random();
+
+        public static string RandomString(int length)
+        {
+            //const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string chars = "zdasdfasfsdfsdvdfgbfhnggitrewrtfdffgvcxcnmbkjqeqwuiuigyiuzpppjnsd";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
         public static bool IsNullOrEmpty(this IWebElement element)
         {
             if(element == null)

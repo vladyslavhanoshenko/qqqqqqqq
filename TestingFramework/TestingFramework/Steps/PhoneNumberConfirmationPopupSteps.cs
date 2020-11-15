@@ -27,7 +27,6 @@ namespace TestingFramework.Steps
             wait.Until(condition => 
             {
                 
-
                 try
                 {
                     var elementToBeDisplayed = registrationPage.phoneNumberConfirmationPopup.ConfirmButton.GetElement().Displayed;

@@ -17,6 +17,7 @@ namespace TestingFramework.Pages
         private DominosLoginPage _mainPage;
         public DominosRegistrationPageSteps dominosRegistrationPageSteps= new DominosRegistrationPageSteps();
         public PhoneNumberConfirmationPopupSteps phoneNumberConfirmationPopupSteps = new PhoneNumberConfirmationPopupSteps();
+        public DominosProfileSteps DominosProfileSteps = new DominosProfileSteps();
         //WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
         public DominosContext(IWebDriver driver)
@@ -33,6 +34,8 @@ namespace TestingFramework.Pages
             //{
             //    _mainPage.LocationSelectPopUpCloseButton.GetElement().Click();
             //}
+
+            _mainPage.LoadingSpinner.WaitUntilElementIsNotDisplayed();
             _mainPage.OpenLoginPopupButton.GetElement().Click();
             wait.Until(ExpectedConditions.ElementIsVisible(_mainPage.RegisterButton));
             Actions action = new Actions(Driver.driver);
@@ -80,12 +83,26 @@ namespace TestingFramework.Pages
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupDisplayed();
 
             SmsRegApiService.SetStatus(1, activationData.Id, 0);
-            SmsRegApiService.WaitUntilSmsTextIsReady(activationData.Id);
-            var smsText = SmsRegApiService.GetSmsText(activationData.Id);
-            var splittedText = smsText.Split(':');
-            var code = splittedText.Last();
 
-            phoneNumberConfirmationPopupSteps.SetSmsCode(code);
+            string smsCode = null;
+            var isSmsReceivedAfter3Min = SmsRegApiService.WaitUntilSmsTextIsReady(activationData.Id);
+            if (isSmsReceivedAfter3Min)
+            {
+                var smsText = SmsRegApiService.GetSmsText(activationData.Id);
+                var splittedText = smsText.Split(':');
+                smsCode = splittedText.Last();
+            }
+            else
+            {
+                SmsRegApiService.SetStatus(8, activationData.Id, 0);
+                WaitForNumbersForOtherServices();
+                var activationDataSecondTry = SmsRegApiService.GetNumberForOtherService();
+                var operatorCodeSecondTry = activationDataSecondTry.PhoneNumber.Substring(0, 5).Remove(0, 2);
+                var numberWithoutOperatorCodeSecondTry = activationDataSecondTry.PhoneNumber.Remove(0, 5);
+            }
+            
+
+            phoneNumberConfirmationPopupSteps.SetSmsCode(smsCode);
             phoneNumberConfirmationPopupSteps.ClickSmsConfirmationButton();
             phoneNumberConfirmationPopupSteps.WaitUntilSmsConfirmationPopupIsNotDisplayed();
             SmsRegApiService.SetStatus(6, activationData.Id, 0);
@@ -101,7 +118,7 @@ namespace TestingFramework.Pages
             dominosRegistrationPageSteps.SetLastName(accountData.LastName);
             accountData.PhoneNumber = AddPhoneNumber();
 
-            DateTime datetime = DateTime.Now.AddDays(20).AddYears(-25);
+            DateTime datetime = DateTime.Now.AddDays(29).AddYears(-25);
             var shortformat = datetime.ToShortDateString();
             accountData.Date = shortformat;
 
@@ -110,6 +127,7 @@ namespace TestingFramework.Pages
             dominosRegistrationPageSteps.CheckConfirmationCheckbox();
             dominosRegistrationPageSteps.ClickConfirmationButton();
             dominosRegistrationPageSteps.WaitUntilRegistrationPageClosed();
+            DominosProfileSteps.WaitUntilProfileSaveButtonDisplayed();
         }
     }
 }

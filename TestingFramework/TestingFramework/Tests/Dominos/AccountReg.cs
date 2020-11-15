@@ -30,7 +30,7 @@ namespace TestingFramework.Tests.Dominos
         public string excelFileSavePath = @"F:\dominosaccounts.xlsx";
         private Random random = new Random();
         private int numForEmail => random.Next(10000);
-        private string MailBoxName => $"petrov{numForEmail}";
+        private string MailBoxName => $"petrov{numForEmail}{ExtensionsMethods.RandomString(5)}";
   
         private const string Password = "qwerty67u9";
         //private string FullEmailAddress => MailBoxName + "@" + MailBoxDomain;
@@ -82,7 +82,7 @@ namespace TestingFramework.Tests.Dominos
 
             try
             {
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     DriverSetup();
                     var domainNamesList = tempMailApi.GetDomainsList();

@@ -176,23 +176,31 @@ namespace TestingFramework.Services.REST.SmsRegApi
             return parsedEnum;
         }
 
-        public static void WaitUntilSmsTextIsReady(string id)
+        public static bool WaitUntilSmsTextIsReady(string id)
         {
             var statusCode = GetStatus(id);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            while (statusCode != GetStatusCodes.STATUS_OK && sw.Elapsed.TotalSeconds != 120)
+            try
             {
-                statusCode = GetStatus(id);
-
-                if (sw.Elapsed.TotalSeconds > 140)
+                while (statusCode != GetStatusCodes.STATUS_OK)
                 {
-                    sw.Stop();
-                    throw new TimeoutException("Code haven't received after 140 second");
+                    statusCode = GetStatus(id);
+
+                    if (sw.Elapsed.TotalSeconds > 180)
+                    {
+                        sw.Stop();
+                        throw new TimeoutException("Code haven't received after 140 second");
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
         }
         //public static GetStatusCodes GetStatus(string id)
         //{
